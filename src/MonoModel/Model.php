@@ -369,11 +369,14 @@ abstract class Model
      * Init/inject PDO connection, if there is none yet.
      *
      * @param \PDO $pdo
+     * @throws \Exception
      */
     public static function connect(\PDO $pdo = null)
     {
-        if (!static::$db) {
-            static::$db = $pdo;
+        static::$db = static::$db ?: $pdo;
+
+        if (!static::$db instanceof \PDO) {
+            throw new \Exception("Missing PDO connection");
         }
     }
 

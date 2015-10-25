@@ -10,4 +10,6 @@ use MonoModel\Model;
 
 Model::connect(new PDO('mysql:host=localhost;dbname=dummy', 'root', ''));
 
-echo User::find(3)->email();
+for ($i = 1; $i <= 100; $i++) {
+    echo User::find($i)->email()."\n";
+}
