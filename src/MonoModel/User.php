@@ -129,4 +129,15 @@ class User extends Model
     {
         return parent::findAny($id);
     }
+
+    /**
+     * Actual model-specific method to find the object.
+     *
+     * @param string $email
+     * @return User
+     */
+    public static function findByEmail($email)
+    {
+        return parent::findBy(['email' => $email]);
+    }
 }
