@@ -5,9 +5,9 @@
  */
 require_once "vendor/autoload.php";
 
-use MonoModel\Customer;
+use MonoModel\User;
 use MonoModel\Model;
 
-Model::connect(new PDO('mysql:host=localhost;dbname=mono', 'root', ''));
+Model::connect(new PDO('mysql:host=localhost;dbname=dummy', 'root', ''));
 
-echo Customer::find(1)->firstName();
+echo User::find(3)->email();
