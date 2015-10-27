@@ -247,7 +247,39 @@ abstract class Model
     }
 
     /**
-     * Build where clause based on the contraints
+     * Find and return an array of all the requested
+     * models by constraints specified in $columns.
+     * Optionally limit the number of results.
+     *
+     * @param array $columns
+     * @param int $limit
+     * @return Model[]
+     * @throws \Exception
+     */
+    public static function findAllBy($columns, $limit = null)
+    {
+        static::connect();
+
+        $limit = !$limit ? null : 'LIMIT '.(int)$limit;
+        $str = "SELECT\n  *\nFROM\n  `%s`\nWHERE %s\n".$limit;
+        $sql = sprintf($str,
+            static::tabelize(get_called_class()),
+            static::wheres($columns)
+        );
+        $stm = static::$db->query($sql);
+
+        while($model = $stm->fetchObject(get_called_class())) {
+            if ($model) {
+                static::rehash($model);
+            }
+            $models[] = $model;
+        }
+
+        return isset($models) ? $models : [];
+    }
+
+    /**
+     * Build where clause based on the constraints
      * specified within the associative array.
      *
      * @param array $columns
