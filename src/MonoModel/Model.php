@@ -225,7 +225,7 @@ abstract class Model
      * constraints specified in $columns.
      *
      * @param array $columns
-     * @return Model
+     * @return Model|null
      */
     public static function findBy($columns)
     {
@@ -243,7 +243,7 @@ abstract class Model
             static::rehash($model);
         }
 
-        return $model;
+        return $model ? $model : null;
     }
 
     /**
@@ -253,7 +253,7 @@ abstract class Model
      *
      * @param array $columns
      * @param int $limit
-     * @return Model[]
+     * @return Model[]|[]
      * @throws \Exception
      */
     public static function findAllBy($columns, $limit = null)
@@ -291,7 +291,7 @@ abstract class Model
             $wheres[] = "\n  ".'`'.$field.'` = '.static::$db->quote($value);
         }
 
-        return isset($wheres) ? implode(' AND ', $wheres) : '1';
+        return isset($wheres) ? implode(' AND ', $wheres) : 1;
     }
 
     /**

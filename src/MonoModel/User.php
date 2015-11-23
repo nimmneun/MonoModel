@@ -2,6 +2,11 @@
 
 /**
  * @author neun
+ * @method static User|null find($id)
+ * @method static User|null findAny($id)
+ * @method static User|null findTrashed($id)
+ * @method static User|null findBy(array $columns)
+ * @method static User[]|[] findAllBy(array $columns)
  */
 class User extends Model
 {
@@ -95,39 +100,6 @@ class User extends Model
     {
         $this->password = hash('sha256', $password);
         return $this;
-    }
-
-    /**
-     * Unnecessary - just for IDE code completion.
-     *
-     * @param int $id
-     * @return User
-     */
-    public static function find($id)
-    {
-        return parent::find($id);
-    }
-
-    /**
-     * Unnecessary - just for IDE code completion.
-     *
-     * @param int $id
-     * @return User
-     */
-    public static function findTrashed($id)
-    {
-        return parent::findTrashed($id);
-    }
-
-    /**
-     * Unnecessary - just for IDE code completion.
-     *
-     * @param int $id
-     * @return User
-     */
-    public static function findAny($id)
-    {
-        return parent::findAny($id);
     }
 
     /**
