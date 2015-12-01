@@ -156,7 +156,7 @@ abstract class Model
      */
     public function touch()
     {
-        null === $this->id ?: $this->setUpdatedAt(null)->save();
+        $this->id ?: $this->setUpdatedAt(null)->save();
     }
 
     /**
@@ -226,8 +226,9 @@ abstract class Model
      *
      * @param array $columns
      * @return Model|null
+     * @throws \Exception
      */
-    public static function findBy($columns)
+    public static function findBy(array $columns)
     {
         static::connect();
 
@@ -253,14 +254,14 @@ abstract class Model
      *
      * @param array $columns
      * @param int $limit
-     * @return Model[]|[]
+     * @return Model[]
      * @throws \Exception
      */
-    public static function findAllBy($columns, $limit = null)
+    public static function findAllBy(array $columns, $limit = null)
     {
         static::connect();
 
-        $limit = !$limit ? null : 'LIMIT '.(int)$limit;
+        $limit = $limit ? 'LIMIT '.(int)$limit : null;
         $str = "SELECT\n  *\nFROM\n  `%s`\nWHERE %s\n".$limit;
         $sql = sprintf($str,
             static::tabelize(get_called_class()),
@@ -285,7 +286,7 @@ abstract class Model
      * @param array $columns
      * @return string
      */
-    private static function wheres(array $columns)
+    protected static function wheres(array $columns)
     {
         foreach ($columns as $field => $value) {
             $wheres[] = "\n  ".'`'.$field.'` = '.static::$db->quote($value);
@@ -322,7 +323,7 @@ abstract class Model
      *
      * @param Model $model
      */
-    private static function update(Model $model)
+    protected static function update(Model $model)
     {
         $str = "UPDATE\n  `%s`\nSET%s\nWHERE\n  `id` = %s";
         $sql = sprintf($str,
@@ -341,7 +342,7 @@ abstract class Model
      * @param Model $model
      * @return string
      */
-    private static function updatables(Model $model)
+    protected static function updatables(Model $model)
     {
         foreach ($model->toArray() as $column => $value) {
             if (!isset($model->globalIgnores[$column])
@@ -359,7 +360,7 @@ abstract class Model
      *
      * @param Model $model
      */
-    private static function insert(Model $model)
+    protected static function insert(Model $model)
     {
         $str = "INSERT INTO\n  `%s`\n  (%s)\nVALUES\n  (%s)";
         list($columns, $values) = static::insertables($model);
@@ -381,7 +382,7 @@ abstract class Model
      * @param Model $model
      * @return string[]
      */
-    private static function insertables(Model $model)
+    protected static function insertables(Model $model)
     {
         foreach ($model->toArray() as $column => $value) {
             if (!isset($model->globalIgnores[$column])
@@ -443,7 +444,7 @@ abstract class Model
      *
      * @param Model $model
      */
-    private static function fillTimestamps(Model $model)
+    protected static function fillTimestamps(Model $model)
     {
         if (1 > $model->id) {
             $model->created_at = date('Y-m-d H:i:s');
@@ -457,7 +458,7 @@ abstract class Model
      * @param object|string $class
      * @return string
      */
-    private static function tabelize($class)
+    protected static function tabelize($class)
     {
         $rc = new \ReflectionClass($class);
         return ltrim(strtolower(preg_replace('/[A-Z]/', '_$0', $rc->getShortName())), '_');
