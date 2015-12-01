@@ -110,6 +110,6 @@ class User extends Model
      */
     public static function findByEmail($email)
     {
-        return parent::findBy(['email' => $email]);
+        return static::findBy(['email' => $email]);
     }
 }

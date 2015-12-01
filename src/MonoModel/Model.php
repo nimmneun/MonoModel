@@ -269,6 +269,7 @@ abstract class Model
         );
         $stm = static::$db->query($sql);
 
+        $models = [];
         while($model = $stm->fetchObject(get_called_class())) {
             if ($model) {
                 static::rehash($model);
@@ -276,7 +277,7 @@ abstract class Model
             $models[] = $model;
         }
 
-        return isset($models) ? $models : [];
+        return $models;
     }
 
     /**
@@ -288,11 +289,12 @@ abstract class Model
      */
     protected static function wheres(array $columns)
     {
+        $wheres = [];
         foreach ($columns as $field => $value) {
             $wheres[] = "\n  ".'`'.$field.'` = '.static::$db->quote($value);
         }
 
-        return isset($wheres) ? implode(' AND ', $wheres) : 1;
+        return 0 < count($wheres) ? implode(' AND ', $wheres) : 1;
     }
 
     /**
@@ -344,15 +346,14 @@ abstract class Model
      */
     protected static function updatables(Model $model)
     {
+        $updates = [];
         foreach ($model->toArray() as $column => $value) {
-            if (!isset($model->globalIgnores[$column])
-                && !isset($model->ignores[$column])
-            ) {
+            if (self::fillable($model, $column)) {
                 $updates[] = "\n  ".'`'.$column.'` = '.self::$db->quote($value);
             }
         }
 
-        return isset($updates) ? implode(',', $updates) : '`id`=`id`';
+        return 0 < count($updates) ? implode(',', $updates) : '`id`=`id`';
     }
 
     /**
@@ -384,18 +385,15 @@ abstract class Model
      */
     protected static function insertables(Model $model)
     {
+        $columns = $values = [];
         foreach ($model->toArray() as $column => $value) {
-            if (!isset($model->globalIgnores[$column])
-                && !isset($model->ignores[$column])
-            ) {
+            if (self::fillable($model, $column)) {
                 $columns[] = '`'.$column.'`';
                 $values[] = static::$db->quote($value);
             }
         }
 
-        return isset($columns) && isset($values)
-            ? array(implode(',',$columns), implode(',',$values))
-            : array();
+        return [implode(',',$columns), implode(',',$values)];
     }
 
     /**
@@ -450,6 +448,17 @@ abstract class Model
             $model->created_at = date('Y-m-d H:i:s');
         }
         $model->updated_at = date('Y-m-d H:i:s');
+    }
+
+    /**
+     * @param Model $model
+     * @param string $column
+     * @return bool
+     */
+    protected static function fillable(Model $model, $column)
+    {
+        return !isset($model->globalIgnores[$column])
+            && !isset($model->ignores[$column]);
     }
 
     /**
