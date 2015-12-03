@@ -6,7 +6,7 @@
  * @method static User findAny($id)
  * @method static User findTrashed($id)
  * @method static User findBy(array $columns)
- * @method static User[] findAllBy(array $columns, $limit)
+ * @method static User[] findAllBy(array $columns, $limit = null)
  */
 class User extends Model
 {

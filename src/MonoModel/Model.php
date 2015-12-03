@@ -232,11 +232,23 @@ abstract class Model
     {
         static::connect();
 
-        $str = "SELECT\n  *\nFROM\n  `%s`\nWHERE %s";
-        $sql = sprintf($str,
-            static::tabelize(get_called_class()),
-            static::wheres($columns)
-        );
+        return self::findRaw(static::wheres($columns));
+    }
+
+    /**
+     * Find and return the requested model by
+     * self written where conditions.
+     *
+     * @param string $condition
+     * @return Model|null
+     * @throws \Exception
+     */
+    public static function findRaw($condition)
+    {
+        static::connect();
+
+        $str = "SELECT\n  *\nFROM\n  `%s`\nWHERE %s LIMIT 1";
+        $sql = sprintf($str, static::tabelize(get_called_class()), $condition);
         $stm = static::$db->query($sql);
         $model = $stm->fetchObject(get_called_class());
 
