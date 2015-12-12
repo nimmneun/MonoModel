@@ -273,12 +273,25 @@ abstract class Model
     {
         static::connect();
 
+        return self::findAllRaw(static::wheres($columns), $limit);
+    }
+
+    /**
+     * Find and return an array of all the requested
+     * models by self written where conditions.
+     *
+     * @param string $condition
+     * @param int $limit
+     * @return Model[]
+     * @throws \Exception
+     */
+    public static function findAllRaw($condition, $limit = null)
+    {
+        static::connect();
+
         $limit = $limit ? 'LIMIT '.(int)$limit : null;
         $str = "SELECT\n  *\nFROM\n  `%s`\nWHERE %s\n".$limit;
-        $sql = sprintf($str,
-            static::tabelize(get_called_class()),
-            static::wheres($columns)
-        );
+        $sql = sprintf($str, static::tabelize(get_called_class()), $condition);
         $stm = static::$db->query($sql);
 
         $models = [];
