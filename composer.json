@@ -1,5 +1,5 @@
 {
-  "name": "nimmneun/MonoModel",
+  "name": "nimmneun/monomodel",
   "autoload": {
     "psr-4": {
       "": "src/"
