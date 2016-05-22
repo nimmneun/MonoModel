@@ -2,7 +2,7 @@
   "name": "nimmneun/MonoModel",
   "autoload": {
     "psr-4": {
-      "MonoModel\\": "src/MonoModel/"
+      "": "src/"
     }
   }
 }
